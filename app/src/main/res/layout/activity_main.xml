@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <Button
+        android:id="@+id/button_starter"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:layout_marginBottom="92dp"
+        android:text="W"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView_img"
+        android:layout_width="411dp"
+        android:layout_height="731dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/ic_launcher_background" />
+
+    <Button
+        android:id="@+id/button_left"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="A"
+        app:layout_constraintEnd_toStartOf="@+id/button_back"
+        app:layout_constraintTop_toBottomOf="@+id/button_starter" />
+
+    <Button
+        android:id="@+id/button_right"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="D"
+        app:layout_constraintStart_toEndOf="@+id/button_back"
+        app:layout_constraintTop_toBottomOf="@+id/button_starter" />
+
+    <Button
+        android:id="@+id/button_back"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="S"
+        app:layout_constraintEnd_toEndOf="@+id/button_starter"
+        app:layout_constraintStart_toStartOf="@+id/button_starter"
+        app:layout_constraintTop_toBottomOf="@+id/button_starter" />
+
+    <Button
+        android:id="@+id/button_turnl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="104dp"
+        android:layout_marginBottom="92dp"
+        android:text="left"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_img"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/button_turnr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="right"
+        app:layout_constraintStart_toEndOf="@+id/button_turnl"
+        app:layout_constraintTop_toTopOf="@+id/button_turnl" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
