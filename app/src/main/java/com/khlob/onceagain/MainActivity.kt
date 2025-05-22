@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -99,6 +100,7 @@ class MainActivity : AppCompatActivity() {
                 insets
             }
         }
+
 
         for(i in -19..19){
             map.add(mapObj(-200* i, 20*200, 200, 1000))
