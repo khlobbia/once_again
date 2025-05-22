@@ -4,11 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
+import android.view.KeyEvent
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlin.random.Random
+
 
 class MainActivity : AppCompatActivity() {
     companion object{
@@ -55,7 +56,37 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            when (event.unicodeChar.toChar()) {
+                'w' -> {
+                    start_button.performClick()
+                    return true
+                }
+                's' -> {
+                    back_button.performClick()
+                    return true
+                }
+                'a' -> {
+                    left_button.performClick()
+                    return true
+                }
+                'd' -> {
+                    right_button.performClick()
+                    return true
+                }
+                'q' -> {
+                    turnl_button.performClick()
+                    return true
+                }
+                'e' -> {
+                    turnr_button.performClick()
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
 
 
@@ -112,6 +143,8 @@ class MainActivity : AppCompatActivity() {
             move_bckwd((1/ DELTA).toInt())
             render_full(map)
         }
+
+
 
         right_button.setOnClickListener {
             move_rt((1/ DELTA).toInt())
