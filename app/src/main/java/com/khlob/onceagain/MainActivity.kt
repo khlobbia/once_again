@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlin.random.Random
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         var map: MutableList<mapObj> = mutableListOf()
         var ghost_locations: MutableList<Int> = mutableListOf() // the indexes of where the ghosts are located inside the map list
     }
-
+    private lateinit var mediaPlayer: MediaPlayer
     lateinit var start_button : Button
     lateinit var back_button : Button
     lateinit var right_button : Button
@@ -92,7 +93,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         if(true) {
             super.onCreate(savedInstanceState)
@@ -104,7 +104,10 @@ class MainActivity : AppCompatActivity() {
                 insets
             }
         }
-
+        if (!this::mediaPlayer.isInitialized) {
+            mediaPlayer = MediaPlayer.create(this, R.raw.music2)
+            mediaPlayer.start()
+        }
 
         for(i in -19..19){
             map.add(mapObj(-200* i, 20*200, 200, 1000))
