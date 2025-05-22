@@ -32,7 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         var cam: mapObj = mapObj(0, 0, 100, 100)
         var angle = 0f
-        var map: MutableList<mapObj> = mutableListOf(mapObj(5000, 0, 200, 1000))
+        var map: MutableList<mapObj> = mutableListOf()
+        var ghost_locations: MutableList<Int> = mutableListOf() // the indexes of where the ghosts are located inside the map list
     }
 
     lateinit var start_button : Button
@@ -47,6 +48,9 @@ class MainActivity : AppCompatActivity() {
     var paints: MutableList<Paint> = mutableListOf()
     lateinit var gray_paint: Paint
     lateinit var orange_paint: Paint
+    lateinit var black_paint: Paint
+    lateinit var lightGray_paint: Paint
+    lateinit var cyan_paint: Paint
 
     var circlex = 0
     var circley = 0
@@ -163,6 +167,7 @@ class MainActivity : AppCompatActivity() {
 
         //the_stuff()
         render_full(map)
+        ghost_movements()
     }
     fun create_random_box(){
         val centerx = Random.nextInt(-20, 20)*200
@@ -180,6 +185,7 @@ class MainActivity : AppCompatActivity() {
         val centerx = Random.nextInt(-20, 20)*200
         val centery = Random.nextInt(-20, 20)*200
         map.add(mapObj(centerx, centery, 200, 1000, true))
+        ghost_locations.add(map.size-1)
     }
 
     fun setPaints(){
@@ -199,6 +205,24 @@ class MainActivity : AppCompatActivity() {
             Paint().apply {
                 isAntiAlias = false
                 color = Color.rgb(255,95,31)
+                style = Paint.Style.FILL
+            }
+        black_paint =
+            Paint().apply {
+                isAntiAlias = false
+                color = Color.BLACK
+                style = Paint.Style.FILL
+            }
+        lightGray_paint =
+            Paint().apply {
+                isAntiAlias = false
+                color = Color.LTGRAY
+                style = Paint.Style.FILL
+            }
+        cyan_paint =
+            Paint().apply {
+                isAntiAlias = false
+                color = Color.CYAN
                 style = Paint.Style.FILL
             }
         var i = 0
@@ -319,7 +343,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        draw_sword(250, -250)
         refresh_canvas()
+    }
+
+    fun draw_sword(x: Int, y: Int){
+        val centerx = x.toFloat()
+        val centery = y.toFloat()
+        drawCustomRect(centerx, centery, 300f, 50f, cyan_paint)
+        drawCustomRect(centerx, centery, 200f, 50f, black_paint)
+        drawCustomRect(centerx, centery-100, 100f, 150f, black_paint)
     }
 
     //old rendering method. Did not work with rotation. Automatically gave local position values given a world space map
@@ -409,12 +442,40 @@ class MainActivity : AppCompatActivity() {
 
         for(checking in given_map){
             //collision detected
-            if(approxX == checking.x && approxZ == checking.z){
+            if(!checking.isPerson && approxX == checking.x && approxZ == checking.z){
                 cam.x -= plusx
                 cam.z -= plusz
                 return false
             }
         }
         return true
+    }
+
+
+
+
+
+
+
+    fun ghost_movements(){
+        Handler(Looper.getMainLooper()).postDelayed({
+
+            for(i in ghost_locations){
+                var looking_ghost = map[i]
+                val plusx = Random.nextInt(-1, 1) * MOVEMENT_SPEED * 1
+                val plusy = Random.nextInt(-1, 1) * MOVEMENT_SPEED * 1
+
+                looking_ghost.x += plusx
+                looking_ghost.z += plusy
+
+                if(Math.abs(looking_ghost.x) > 20 * 200 || Math.abs(looking_ghost.z)> 20 * 200){
+                    looking_ghost.x = Random.nextInt(-20, 20) * 200
+                    looking_ghost.z = Random.nextInt(-20, 20) * 200
+                }
+            }
+
+            render_full(map)
+            ghost_movements()
+        }, 1000)
     }
 }
