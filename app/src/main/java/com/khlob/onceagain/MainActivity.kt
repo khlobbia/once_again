@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import java.util.Vector
 import kotlin.random.Random
 
 
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var left_button: Button
     lateinit var turnl_button: Button
     lateinit var turnr_button: Button
+    lateinit var atk_button: Button
     lateinit var my_img: ImageView
 
     lateinit var red_paint: Paint
@@ -53,8 +55,11 @@ class MainActivity : AppCompatActivity() {
     lateinit var lightGray_paint: Paint
     lateinit var cyan_paint: Paint
 
-    var circlex = 0
-    var circley = 0
+    var attacking = false
+    var sword_normal_posx = 250
+    var sword_normal_posy = -250
+    var sword_attack_posx = 125
+    var sword_attack_posy = -125
 
 
 
@@ -83,6 +88,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 'e' -> {
                     turnr_button.performClick()
+                    return true
+                }
+                'f' -> {
+                    atk_button.performClick()
                     return true
                 }
             }
@@ -138,6 +147,7 @@ class MainActivity : AppCompatActivity() {
         left_button = findViewById(R.id.button_left)
         turnl_button = findViewById(R.id.button_turnl)
         turnr_button = findViewById(R.id.button_turnr)
+        atk_button = findViewById(R.id.button_atk)
         start_button.setOnClickListener {
             /*cam.z+= (100 * Math.cos(angle.toDouble())).toInt()
             cam.x+= (100 * Math.sin(angle.toDouble())).toInt()*/
@@ -166,6 +176,10 @@ class MainActivity : AppCompatActivity() {
         turnr_button.setOnClickListener {
             rot_rt((1/ DELTA).toInt())
             render_full(map)
+        }
+
+        atk_button.setOnClickListener {
+            start_attack()
         }
 
         //the_stuff()
@@ -346,7 +360,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        draw_sword(250, -250)
+        if(attacking){
+            draw_sword(sword_attack_posx, sword_attack_posy)
+        } else{
+            draw_sword(sword_normal_posx, sword_normal_posy)
+        }
+
         refresh_canvas()
     }
 
@@ -356,6 +375,9 @@ class MainActivity : AppCompatActivity() {
         drawCustomRect(centerx, centery, 300f, 50f, cyan_paint)
         drawCustomRect(centerx, centery, 200f, 50f, black_paint)
         drawCustomRect(centerx, centery-100, 100f, 150f, black_paint)
+        drawCustomRect(centerx, centery+ 125, 100f, 200f, lightGray_paint)
+        drawCustomRect(centerx, centery+ 225+100, 75f, 200f, lightGray_paint)
+        drawCustomRect(centerx, centery+ 25+ 150, 15f, 300f, gray_paint)
     }
 
     //old rendering method. Did not work with rotation. Automatically gave local position values given a world space map
@@ -480,5 +502,25 @@ class MainActivity : AppCompatActivity() {
             render_full(map)
             ghost_movements()
         }, 1000)
+    }
+
+
+
+
+
+
+
+    fun start_attack(){
+        attacking = true
+        hit_reg()
+        render_full(map)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            attacking = false
+            render_full(map)
+        }, 500)
+    }
+    fun hit_reg(){
+
     }
 }
