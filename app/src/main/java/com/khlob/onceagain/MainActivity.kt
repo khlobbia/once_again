@@ -12,11 +12,13 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.transition.Visibility
 import java.util.Vector
 import kotlin.random.Random
 
@@ -36,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         var angle = 0f
         var map: MutableList<mapObj> = mutableListOf()
         var ghost_locations: MutableList<Int> = mutableListOf() // the indexes of where the ghosts are located inside the map list
+        var score = 0
+        var time = 60
+        var gameOver = false
     }
     private lateinit var mediaPlayer: MediaPlayer
     lateinit var start_button : Button
@@ -46,6 +51,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var turnr_button: Button
     lateinit var atk_button: Button
     lateinit var my_img: ImageView
+    lateinit var scoreboard: TextView
+    lateinit var timer: TextView
 
     lateinit var red_paint: Paint
     var paints: MutableList<Paint> = mutableListOf()
@@ -64,6 +71,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if(gameOver)return true
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.unicodeChar.toChar()) {
                 'w' -> {
@@ -148,6 +156,11 @@ class MainActivity : AppCompatActivity() {
         turnl_button = findViewById(R.id.button_turnl)
         turnr_button = findViewById(R.id.button_turnr)
         atk_button = findViewById(R.id.button_atk)
+        scoreboard = findViewById(R.id.textView_score)
+        timer = findViewById(R.id.textView_timer)
+        scoreboard.text = "Score: 0"
+        timer.text = "Time: 60"
+        do_time()
         start_button.setOnClickListener {
             /*cam.z+= (100 * Math.cos(angle.toDouble())).toInt()
             cam.x+= (100 * Math.sin(angle.toDouble())).toInt()*/
@@ -361,6 +374,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         if(attacking){
+            drawCustomRect(sword_attack_posx.toFloat(), sword_attack_posy.toFloat()+200, 200f, 600f, red_paint)
             draw_sword(sword_attack_posx, sword_attack_posy)
         } else{
             draw_sword(sword_normal_posx, sword_normal_posy)
@@ -483,6 +497,8 @@ class MainActivity : AppCompatActivity() {
 
 
     fun ghost_movements(){
+        if(gameOver)return
+
         Handler(Looper.getMainLooper()).postDelayed({
 
             for(i in ghost_locations){
@@ -521,6 +537,41 @@ class MainActivity : AppCompatActivity() {
         }, 500)
     }
     fun hit_reg(){
+        for(i in ghost_locations){
+            //map[i] is the ghost the code is currently looking at
+            if(Math.abs(cam.x - map[i].x) <=1000 && Math.abs(cam.z-map[i].z)<=1000){
+                map[i].x = Random.nextInt(-20, 20) * 200
+                map[i].z = Random.nextInt(-20, 20) * 200
+                score+=1
+                scoreboard.text = "Score: "+ score
+            }
+        }
+    }
 
+    fun do_time(){
+        time -= 1
+        timer.text = "Time: "
+        if(time<10) timer.text = timer.text.toString() + "0"
+        timer.text = timer.text.toString() + time
+
+        if(time<=0) {
+            gameOver = true
+            end_game()
+            return
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            do_time()
+        }, 1000)
+    }
+
+    fun end_game(){
+        atk_button.visibility = View.GONE
+        start_button.visibility = View.GONE
+        turnr_button.visibility = View.GONE
+        turnl_button.visibility = View.GONE
+        back_button.visibility = View.GONE
+        left_button.visibility = View.GONE
+        right_button.visibility = View.GONE
     }
 }
