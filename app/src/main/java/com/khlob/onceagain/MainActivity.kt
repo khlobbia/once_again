@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         var gameOver = false
     }
     private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var explodePlayer: MediaPlayer
     lateinit var start_button : Button
     lateinit var back_button : Button
     lateinit var right_button : Button
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity() {
     var sword_normal_posy = -250
     var sword_attack_posx = 125
     var sword_attack_posy = -125
+    var hitting = false
 
 
 
@@ -94,11 +96,23 @@ class MainActivity : AppCompatActivity() {
                     turnl_button.performClick()
                     return true
                 }
+                'i' -> {
+                    turnl_button.performClick()
+                    return true
+                }
                 'e' -> {
                     turnr_button.performClick()
                     return true
                 }
+                'p' -> {
+                    turnr_button.performClick()
+                    return true
+                }
                 'f' -> {
+                    atk_button.performClick()
+                    return true
+                }
+                'o' -> {
                     atk_button.performClick()
                     return true
                 }
@@ -124,6 +138,9 @@ class MainActivity : AppCompatActivity() {
         if (!this::mediaPlayer.isInitialized) {
             mediaPlayer = MediaPlayer.create(this, R.raw.music2)
             mediaPlayer.start()
+        }
+        if (!this::explodePlayer.isInitialized) {
+            explodePlayer = MediaPlayer.create(this, R.raw.explode)
         }
 
         for(i in -19..19){
@@ -374,7 +391,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         if(attacking){
-            drawCustomRect(sword_attack_posx.toFloat(), sword_attack_posy.toFloat()+200, 200f, 600f, red_paint)
+            if(hitting){
+                drawCustomRect(sword_attack_posx.toFloat(), sword_attack_posy.toFloat()+200, 200f, 600f, red_paint)
+            }
             draw_sword(sword_attack_posx, sword_attack_posy)
         } else{
             draw_sword(sword_normal_posx, sword_normal_posy)
@@ -533,10 +552,12 @@ class MainActivity : AppCompatActivity() {
 
         Handler(Looper.getMainLooper()).postDelayed({
             attacking = false
+            hitting = false
             render_full(map)
         }, 500)
     }
     fun hit_reg(){
+        hitting = false
         for(i in ghost_locations){
             //map[i] is the ghost the code is currently looking at
             if(Math.abs(cam.x - map[i].x) <=1000 && Math.abs(cam.z-map[i].z)<=1000){
@@ -544,6 +565,8 @@ class MainActivity : AppCompatActivity() {
                 map[i].z = Random.nextInt(-20, 20) * 200
                 score+=1
                 scoreboard.text = "Score: "+ score
+                hitting = true
+                explodePlayer.start()
             }
         }
     }
@@ -573,5 +596,7 @@ class MainActivity : AppCompatActivity() {
         back_button.visibility = View.GONE
         left_button.visibility = View.GONE
         right_button.visibility = View.GONE
+
+        //put the thing that shows the "time up" screen and the "main menu" button
     }
 }
