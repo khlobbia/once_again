@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         var bitmap: Bitmap = Bitmap.createBitmap(SCREEN_WIDTH, SCREEN_HEIGHT, Bitmap.Config.ARGB_8888)
 
         var cam: mapObj = mapObj(0, 0, 100, 100)
+        var mode = 0
         var angle = 0f
         var map: MutableList<mapObj> = mutableListOf()
         var ghost_locations: MutableList<Int> = mutableListOf() // the indexes of where the ghosts are located inside the map list
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var my_img: ImageView
     lateinit var scoreboard: TextView
     lateinit var timer: TextView
+    lateinit var timeup: TextView
 
     lateinit var red_paint: Paint
     var paints: MutableList<Paint> = mutableListOf()
@@ -175,9 +177,16 @@ class MainActivity : AppCompatActivity() {
         atk_button = findViewById(R.id.button_atk)
         scoreboard = findViewById(R.id.textView_score)
         timer = findViewById(R.id.textView_timer)
-        scoreboard.text = "Score: 0"
-        timer.text = "Time: 60"
+        timeup = findViewById(R.id.textView_timesup)
         do_time()
+        scoreboard.text = "Score: 0"
+        if(mode==0){
+            time=60
+        }else if(mode==1){
+            time=0
+        }
+        timer.text = "Time: 60"
+        timeup.visibility = View.INVISIBLE
         start_button.setOnClickListener {
             /*cam.z+= (100 * Math.cos(angle.toDouble())).toInt()
             cam.x+= (100 * Math.sin(angle.toDouble())).toInt()*/
@@ -572,13 +581,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun do_time(){
-        time -= 1
+        if(mode==0){
+            time -= 1
+        } else if(mode==1){
+            time++
+        }
         timer.text = "Time: "
         if(time<10) timer.text = timer.text.toString() + "0"
         timer.text = timer.text.toString() + time
 
         if(time<=0) {
             gameOver = true
+            timeup.visibility = View.VISIBLE
             end_game()
             return
         }
