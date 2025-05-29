@@ -1,5 +1,7 @@
 package com.khlob.onceagain
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -11,6 +13,7 @@ import android.os.Looper
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -56,6 +59,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var scoreboard: TextView
     lateinit var timer: TextView
     lateinit var timeup: TextView
+    lateinit var home_buttom: ImageButton
 
     lateinit var red_paint: Paint
     var paints: MutableList<Paint> = mutableListOf()
@@ -137,6 +141,7 @@ class MainActivity : AppCompatActivity() {
                 insets
             }
         }
+        gameOver = false
         if (!this::mediaPlayer.isInitialized) {
             mediaPlayer = MediaPlayer.create(this, R.raw.music2)
             mediaPlayer.start()
@@ -178,6 +183,7 @@ class MainActivity : AppCompatActivity() {
         scoreboard = findViewById(R.id.textView_score)
         timer = findViewById(R.id.textView_timer)
         timeup = findViewById(R.id.textView_timesup)
+        home_buttom = findViewById(R.id.imageButton_home)
         do_time()
         scoreboard.text = "Score: 0"
         if(mode==0){
@@ -196,6 +202,12 @@ class MainActivity : AppCompatActivity() {
         back_button.setOnClickListener {
             move_bckwd((1/ DELTA).toInt())
             render_full(map)
+        }
+        home_buttom.setOnClickListener {
+            finish()
+            mediaPlayer.stop()
+            val intent = Intent(this, TitleActivity::class.java)
+            startActivity(intent)
         }
 
 
@@ -544,7 +556,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             render_full(map)
-            ghost_movements()
+            if(!gameOver)ghost_movements()
         }, 1000)
     }
 
@@ -581,25 +593,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun do_time(){
+        if(gameOver)return
+
         if(mode==0){
             time -= 1
         } else if(mode==1){
             time++
         }
+
         timer.text = "Time: "
         if(time<10) timer.text = timer.text.toString() + "0"
         timer.text = timer.text.toString() + time
 
-        if(time<=0) {
+        if(mode==0 && time<=0) {
             gameOver = true
             timeup.visibility = View.VISIBLE
             end_game()
             return
         }
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            do_time()
-        }, 1000)
+        if(!gameOver){
+            Handler(Looper.getMainLooper()).postDelayed({
+                do_time()
+            }, 1000)
+        }
     }
 
     fun end_game(){

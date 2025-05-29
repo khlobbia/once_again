@@ -4,6 +4,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
+import android.os.Handler.Callback
 import android.os.Looper
 import android.widget.Button
 import android.widget.TextView
@@ -24,8 +25,20 @@ class TitleActivity : AppCompatActivity() {
 
         title_words = findViewById(R.id.start_title)
         val startButton = findViewById<Button>(R.id.start_button)
+        val endless = findViewById<Button>(R.id.buttonendless)
         startButton.setOnClickListener {
+            Handler(Looper.getMainLooper()).removeCallbacksAndMessages(null)
+            finish()
             val intent = Intent(this, MainActivity::class.java)
+            MainActivity.mode=0
+            startActivity(intent)
+            mediaPlayer.stop()
+        }
+        endless.setOnClickListener {
+            Handler(Looper.getMainLooper()).removeCallbacksAndMessages(null)
+            finish()
+            val intent = Intent(this, MainActivity::class.java)
+            MainActivity.mode=1
             startActivity(intent)
             mediaPlayer.stop()
         }
