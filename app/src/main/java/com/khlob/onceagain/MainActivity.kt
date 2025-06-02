@@ -150,6 +150,9 @@ class MainActivity : AppCompatActivity() {
             explodePlayer = MediaPlayer.create(this, R.raw.explode)
         }
 
+        cam = mapObj(0, 0, 100, 100)
+        map = mutableListOf()
+        ghost_locations = mutableListOf()
         for(i in -19..19){
             map.add(mapObj(-200* i, 20*200, 200, 1000))
             map.add(mapObj(-200* i, -20*200, 200, 1000))
